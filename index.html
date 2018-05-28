@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>title</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css" />
+    <style>
+        html,
+        body,
+        .qb-ui-layout {
+            height: 100% !important;
+            width: 100% !important;
+            margin: 0;
+        }
+
+        .qb-ui-layout {
+            opacity: 0;
+            transition: opacity 2000ms linear;
+        }
+        
+        .qb-ui-layout.fadeIn {
+            opacity: 1;
+        }
+		
+		.ui-qb-grid {
+			bottom: auto;
+		}
+        
+        @media screen and (max-height: 1024px) {
+            .editable-select-options {
+                width: 300px !important;
+            }
+        }
+        </style>
+</head>
+<body>
+<div id="queryBuilder"></div>
+<div class="qb-ui-layout">
+	<div class="qb-ui-layout__left">
+		<div class="qb-ui-structure-tabs">
+			<div class="qb-ui-structure-tabs__tab">
+				<input type="radio" id="tree-tab" name="qb-tabs" checked />
+				<label class="ui-widget-header qb-widget-header" for="tree-tab">Database</label>
+				<div class="qb-ui-structure-tabs__content">
+					<div id="treeView"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="qb-ui-layout__right">
+		<div class="qb-ui-layout__right-top">
+			<div id="navigationBar"></div>
+			<div id="canvas"></div>
+			<div ID="statusBar"></div>
+		</div>
+		<div class="qb-ui-layout__right-bottom">
+			<div class="qb-ui-structure-tabs">
+				<div class="qb-ui-structure-tabs__tab">
+					<input type="radio" id="qcl-tab" name="right-tabs" checked />
+					<label class="ui-widget-header qb-widget-header" for="qcl-tab">Column List</label>
+					<div class="qb-ui-structure-tabs__content">
+						<div id="grid"></div>
+					</div>
+				</div>
+				<div class="qb-ui-structure-tabs__tab">
+					<input type="radio" id="sql-tab" name="right-tabs" />
+					<label class="ui-widget-header qb-widget-header" for="sql-tab">SQL Text</label>
+					<div class="qb-ui-structure-tabs__content">
+						<div id="sqlEditor"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="./aqb.client.js"></script>
+<script>
+	AQB.Web.host = 'https://api.aspquerybuilder.net';
+	AQB.Web.beforeSend = beforeSend;
+
+	var instanceId = 'CrossDomainQueryBuilder';
+
+	function beforeSend(xhr) {
+		xhr.setRequestHeader('query-builder-token', getToken());
+	}
+
+	function createQueryBuilder(onSuccess, onError) {
+		checkToken(function () {
+			createQbOnServer(onSuccess, onError);
+		});
+	}
+
+	function checkToken(callback) {
+		$.ajax({
+			type: 'GET',
+			url: AQB.Web.host + '/QueryBuilder/CheckToken?token=' + getToken(),
+			success: function (token) {
+				if (token)
+					saveToken(token);
+				callback();
+			}
+		});
+	}
+
+	function createQbOnServer(onSuccess, onError) {
+		$.ajax({
+			url: AQB.Web.host + '/QueryBuilder/CreateQueryBuilder',
+			data: { name: instanceId },
+			beforeSend: beforeSend,
+			success: onSuccess,
+			error: onError
+		});
+	}
+
+	function getToken() {
+		return localStorage.getItem('queryBuilderToken');
+	}
+
+	function saveToken(token) {
+		localStorage.setItem('queryBuilderToken', token);
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+		var ui = AQB.Web.UI;
+
+		ui.QueryBuilder(instanceId, queryBuilder, { useDefaultTheme: false, language: 'en' });
+		ui.ObjectTreeView(instanceId, treeView);
+		ui.SubQueryNavigationBar(instanceId, navigationBar);
+		ui.Canvas(instanceId, canvas);
+		ui.StatusBar(instanceId, statusBar);
+		ui.Grid(instanceId, grid, { orColumnCount: 0 });
+		ui.SqlEditor(instanceId, sqlEditor);
+
+		ui.startApplication(instanceId, createQueryBuilder);
+
+		setTimeout(function() {
+			document.getElementsByClassName('qb-ui-layout')[0].classList.add('fadeIn');
+		});
+	});
+</script>
+</body>
+</html>
