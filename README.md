@@ -8,3 +8,5 @@ You can test the component in full
 
 Please direct your questions, feedback and kudos to our support center:
 [Active Query Builder Support Center](https://support.activequerybuilder.com/hc/)
+
+[Start the demo page](https://activedbsoft.github.io/mobile-query-builder/)
