@@ -5,7 +5,7 @@
     <title>Mobile Query Builder</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css" />
-    <style>
+	<style>
         html,
         body,
         .qb-ui-layout {
@@ -30,6 +30,10 @@
 		.properties__label {
 			vertical-align: middle;
 		}
+		
+		.qb-ui-layout__right-top {
+			margin-bottom: 0 !important;
+		}
         
         @media screen and (max-height: 1024px) {
             .editable-select-options {
@@ -45,7 +49,7 @@
 		<div class="qb-ui-structure-tabs">
 			<div class="qb-ui-structure-tabs__tab">
 				<input type="radio" id="tree-tab" name="qb-tabs" checked />
-				<label class="ui-widget-header qb-widget-header" for="tree-tab">Database</label>
+				<label for="tree-tab">Database</label>
 				<div class="qb-ui-structure-tabs__content">
 					<div id="treeView"></div>
 				</div>
@@ -62,14 +66,14 @@
 			<div class="qb-ui-structure-tabs">
 				<div class="qb-ui-structure-tabs__tab">
 					<input type="radio" id="qcl-tab" name="right-tabs" checked />
-					<label class="ui-widget-header qb-widget-header" for="qcl-tab">Column List</label>
+					<label for="qcl-tab">Column List</label>
 					<div class="qb-ui-structure-tabs__content">
 						<div id="grid"></div>
 					</div>
 				</div>
 				<div class="qb-ui-structure-tabs__tab">
 					<input type="radio" id="sql-tab" name="right-tabs" />
-					<label class="ui-widget-header qb-widget-header" for="sql-tab">SQL Text</label>
+					<label for="sql-tab">SQL Text</label>
 					<div class="qb-ui-structure-tabs__content">
 						<div id="sqlEditor"></div>
 					</div>
@@ -80,7 +84,10 @@
 </div>
 	
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="./aqb.client.js"></script>
+<link rel="stylesheet" type="text/css" href="/layout.mobile.css" />
+<script src="/aqb.client.js"></script>
+<script src="/layout.mobile.js"></script>
+
 <script>
 	AQB.Web.host = 'https://api.aspquerybuilder.net';
 	AQB.Web.beforeSend = beforeSend;
@@ -130,7 +137,7 @@
 	document.addEventListener('DOMContentLoaded', function () {
 		var ui = AQB.Web.UI;
 
-		ui.QueryBuilder(instanceId, queryBuilder, { useDefaultTheme: false, language: 'en' });
+		ui.QueryBuilder(instanceId, queryBuilder, { language: 'en', theme: 'jqueryui' });
 		ui.ObjectTreeView(instanceId, treeView);
 		ui.SubQueryNavigationBar(instanceId, navigationBar);
 		ui.Canvas(instanceId, canvas);
